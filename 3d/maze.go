@@ -12,7 +12,6 @@ import (
 
 const (
 	cellSize      = 40
-	wallHeight    = 20
 	entranceColor = "#00FF00" // Green color for entrance
 	exitColor     = "#FF0000" // Red color for exit
 )
@@ -78,11 +77,11 @@ func (m *Maze) Draw3DMaze(filename string) error {
 	dc.Clear()
 
 	// Load textures
-	brickTexture, err := gg.LoadImage("textures/floor.png")
+	floorTexture, err := gg.LoadImage("textures/floor.png")
 	if err != nil {
 		return fmt.Errorf("could not load floor texture: %v", err)
 	}
-	grassTexture, err := gg.LoadImage("textures/wall.png")
+	wallTexture, err := gg.LoadImage("textures/wall.png")
 	if err != nil {
 		return fmt.Errorf("could not load wall texture: %v", err)
 	}
@@ -97,13 +96,13 @@ func (m *Maze) Draw3DMaze(filename string) error {
 			screenY := offsetY + float64(y*cellSize)
 
 			if cell.IsWall {
-				drawWall(dc, screenX, screenY, grassTexture)
+				drawWall(dc, screenX, screenY, wallTexture)
 			} else if cell.IsEntrance {
 				drawEntrance(dc, screenX, screenY)
 			} else if cell.IsExit {
 				drawExit(dc, screenX, screenY)
 			} else {
-				drawFloor(dc, screenX, screenY, brickTexture)
+				drawFloor(dc, screenX, screenY, floorTexture)
 			}
 		}
 	}
@@ -124,15 +123,43 @@ func drawFloor(dc *gg.Context, x, y float64, texture image.Image) {
 }
 
 func drawEntrance(dc *gg.Context, x, y float64) {
-	dc.SetColor(color.RGBA{0, 255, 0, 255})
+	// Draw gradient background
+	grad := gg.NewLinearGradient(x, y, x+cellSize, y+cellSize)
+	grad.AddColorStop(0, color.RGBA{0, 200, 0, 255})
+	grad.AddColorStop(1, color.RGBA{0, 100, 0, 255})
+	dc.SetFillStyle(grad)
 	dc.DrawRectangle(x, y, cellSize, cellSize)
 	dc.Fill()
+
+	// Draw border
+	dc.SetColor(color.RGBA{0, 0, 0, 255})
+	dc.SetLineWidth(2)
+	dc.DrawRectangle(x, y, cellSize, cellSize)
+	dc.Stroke()
+
+	// Draw entrance text
+	dc.SetRGB(255, 255, 255)
+	dc.DrawStringAnchored("Start", x+cellSize/2, y+cellSize/2, 0.5, 0.5)
 }
 
 func drawExit(dc *gg.Context, x, y float64) {
-	dc.SetColor(color.RGBA{255, 0, 0, 255})
+	// Draw gradient background
+	grad := gg.NewLinearGradient(x, y, x+cellSize, y+cellSize)
+	grad.AddColorStop(0, color.RGBA{200, 0, 0, 255})
+	grad.AddColorStop(1, color.RGBA{100, 0, 0, 255})
+	dc.SetFillStyle(grad)
 	dc.DrawRectangle(x, y, cellSize, cellSize)
 	dc.Fill()
+
+	// Draw border
+	dc.SetColor(color.RGBA{0, 0, 0, 255})
+	dc.SetLineWidth(2)
+	dc.DrawRectangle(x, y, cellSize, cellSize)
+	dc.Stroke()
+
+	// Draw exit text
+	dc.SetRGB(255, 255, 255)
+	dc.DrawStringAnchored("Exit", x+cellSize/2, y+cellSize/2, 0.5, 0.5)
 }
 
 func main() {
