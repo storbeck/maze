@@ -6,10 +6,14 @@ import (
 	"os"
 )
 
+// Cell represents each cell in the maze
 type Cell struct {
-	IsWall bool
+	IsWall     bool
+	IsEntrance bool
+	IsExit     bool
 }
 
+// Maze represents the maze grid
 type Maze struct {
 	Width, Height int
 	Grid          [][]Cell
@@ -29,7 +33,16 @@ func NewMaze(filename string) (*Maze, error) {
 		line := scanner.Text()
 		row := []Cell{}
 		for _, char := range line {
-			row = append(row, Cell{IsWall: char == '█'})
+			switch char {
+			case '█':
+				row = append(row, Cell{IsWall: true})
+			case 'E':
+				row = append(row, Cell{IsWall: false, IsEntrance: true})
+			case 'X':
+				row = append(row, Cell{IsWall: false, IsExit: true})
+			default:
+				row = append(row, Cell{IsWall: false})
+			}
 		}
 		grid = append(grid, row)
 	}
@@ -52,6 +65,10 @@ func (m *Maze) Print3D() {
 		for x := 0; x < m.Width; x++ {
 			if m.Grid[y][x].IsWall {
 				fmt.Print("###")
+			} else if m.Grid[y][x].IsEntrance {
+				fmt.Print(" E ")
+			} else if m.Grid[y][x].IsExit {
+				fmt.Print(" X ")
 			} else {
 				fmt.Print("   ")
 			}
