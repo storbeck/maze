@@ -1,75 +1,70 @@
-# Maze Generator and 2D Viewer
+# Maze Generator
 
-This project provides tools to generate a maze and view it in a simple 2D ASCII representation. 
+This project generates mazes and displays them in 2D and 3D with various textures. 
 
-## Repository Structure
+## Setup
 
-```
-.
-├── go.mod
-├── lib
-│   └── maze.go
-├── gen
-│   └── main.go
-└── 2d
-    └── main.go
-```
+Ensure you have [Go](https://golang.org/dl/) installed on your system.
 
-## Prerequisites
+### Usage
 
-- Go 1.16+ installed on your machine.
+1. **Clone the repository**:
+   ```sh
+   git clone https://github.com/storbeck/maze.git
+   cd maze
+   ```
 
-## Installation
+2. **Generate the textures and build the project**:
+   ```sh
+   make && ./new-3d.sh
+   ```
+   This command will:
+   - Generate new textures.
+   - Build the `mazegen`, `maze2d`, and `maze3d` executables.
+   - Generate a new 3D maze image and open it.
 
-Clone the repository:
+3. **Build the project without generating new textures for 2D**:
+   ```sh
+   make build && ./new-2d.sh
+   ```
+   This command will:
+   - Build the `mazegen`, `maze2d`, and `maze3d` executables without generating new textures.
+   - Generate a new 2D maze image and open it.
 
+### Makefile Commands
+
+- `make`: Generates new textures and builds the project.
+- `make build`: Builds the project without generating new textures.
+- `make clean`: Cleans up the generated executables and textures.
+
+### Texture Generators
+
+- **Floor Texture**: Generates a tiled floor texture.
+- **Wall Texture**: Generates a gradient wall texture.
+- **Lava Texture**: Generates a noisy lava-like texture.
+- **Polka Dot Texture**: Generates a polka dot pattern texture.
+
+### Shell Scripts
+
+- **`new-3d.sh`**: Generates a new maze, creates new textures, generates a 3D image, and opens it.
+- **`new-2d.sh`**: Generates a new maze and generates a 2D image without creating new textures.
+
+### Dependencies
+
+- [Go](https://golang.org/dl/)
+- [gg](https://github.com/fogleman/gg) library for graphics:
+  ```sh
+  go get -u github.com/fogleman/gg
+  ```
+
+### Example
+
+To generate and view a new 3D maze with textures:
 ```sh
-git clone https://github.com/storbeck/maze.git
-cd maze
+make && ./new-3d.sh
 ```
 
-Initialize the Go module:
-
+To generate and view a new 2D maze without generating new textures:
 ```sh
-go mod init github.com/storbeck/maze
+make build && ./new-2d.sh
 ```
-
-## Building
-
-Build both the maze generator and the 2D viewer from the root directory:
-
-```sh
-go build -o mazegen gen/main.go
-go build -o maze2d 2d/main.go
-```
-
-## Usage
-
-### Generating a Maze
-
-Generate a maze using the `mazegen` tool. Specify the size using the `-size` flag (e.g., 10x10):
-
-```sh
-./mazegen -size 10x10 > maze.txt
-```
-
-### Viewing the Maze in 2D
-
-View the generated maze in a 2D ASCII representation using the `maze2d` tool:
-
-```sh
-./maze2d maze.txt
-```
-
-## Example
-
-Generate and view a 10x10 maze:
-
-```sh
-./mazegen -size 10x10 > maze.txt
-./maze2d maze.txt
-```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
