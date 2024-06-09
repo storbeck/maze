@@ -58,8 +58,8 @@ func NewMaze(filename string) (*Maze, error) {
 	}, nil
 }
 
-// Print3D prints a simple 3D-like representation of the maze
-func (m *Maze) Print3D() {
+// Print2D prints a simple 2D representation of the maze
+func (m *Maze) Print2D() {
 	for y := 0; y < m.Height; y++ {
 		// Top wall
 		for x := 0; x < m.Width; x++ {
@@ -93,7 +93,7 @@ func (m *Maze) Print3D() {
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Println("Usage: ./maze3d <filename>")
+		fmt.Println("Usage: ./maze2d <filename>")
 		return
 	}
 
@@ -104,5 +104,5 @@ func main() {
 		return
 	}
 
-	maze.Print3D()
+	maze.Print2D()
 }

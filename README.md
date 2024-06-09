@@ -1,9 +1,6 @@
-# Maze Generator and 3D Viewer
+# Maze Generator and 2D Viewer
 
-This project provides tools to generate a maze and view it in a simple 3D-like ASCII representation. The project is organized into three main components:
-1. **mazelib**: A library for maze generation and representation.
-2. **mazegen**: A command-line tool to generate mazes.
-3. **maze3d**: A command-line tool to display the maze in a 3D-like ASCII representation.
+This project provides tools to generate a maze and view it in a simple 2D ASCII representation. 
 
 ## Repository Structure
 
@@ -14,25 +11,24 @@ This project provides tools to generate a maze and view it in a simple 3D-like A
 │   └── maze.go
 ├── gen
 │   └── main.go
-└── 3d
+└── 2d
     └── main.go
 ```
 
 ## Prerequisites
 
 - Go 1.16+ installed on your machine.
-- Git installed on your machine.
 
 ## Installation
 
-First, clone the repository:
+Clone the repository:
 
 ```sh
 git clone https://github.com/storbeck/maze.git
 cd maze
 ```
 
-Initialize the Go module (if not already done):
+Initialize the Go module:
 
 ```sh
 go mod init github.com/storbeck/maze
@@ -40,71 +36,40 @@ go mod init github.com/storbeck/maze
 
 ## Building
 
-You can build both the maze generator and the 3D viewer from the root directory.
-
-### Building the Maze Generator
+Build both the maze generator and the 2D viewer from the root directory:
 
 ```sh
 go build -o mazegen gen/main.go
-```
-
-### Building the 3D Maze Viewer
-
-```sh
-go build -o maze3d 3d/main.go
+go build -o maze2d 2d/main.go
 ```
 
 ## Usage
 
 ### Generating a Maze
 
-To generate a maze, use the `mazegen` tool. You can specify the size of the maze using the `-size` flag. For example, to generate a 10x10 maze:
+Generate a maze using the `mazegen` tool. Specify the size using the `-size` flag (e.g., 10x10):
 
 ```sh
 ./mazegen -size 10x10 > maze.txt
 ```
 
-This will create a 10x10 maze and output it to `maze.txt`.
+### Viewing the Maze in 2D
 
-### Viewing the Maze in 3D
-
-To view the generated maze in a 3D-like ASCII representation, use the `maze3d` tool:
+View the generated maze in a 2D ASCII representation using the `maze2d` tool:
 
 ```sh
-./maze3d maze.txt
+./maze2d maze.txt
 ```
-
-This will read the maze from `maze.txt` and display it in the console.
 
 ## Example
 
-Here is an example of generating and viewing a 10x10 maze:
+Generate and view a 10x10 maze:
 
-1. **Generate the Maze:**
-
-   ```sh
-   ./mazegen -size 10x10 > maze.txt
-   ```
-
-2. **View the Maze in 3D:**
-
-   ```sh
-   ./maze3d maze.txt
-   ```
-
-## Contributing
-
-Feel free to submit issues or pull requests if you have any improvements or bug fixes.
+```sh
+./mazegen -size 10x10 > maze.txt
+./maze2d maze.txt
+```
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
-
-### Additional Steps
-Ensure your `go.mod` file is properly configured for the module:
-```sh
-module github.com/storbeck/maze
-
-go 1.16
-```
