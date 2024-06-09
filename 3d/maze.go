@@ -78,9 +78,9 @@ func (m *Maze) Draw3DMaze(filename string) error {
 	dc.Clear()
 
 	// Load textures
-	brickTexture, err := gg.LoadImage("textures/lava.png")
+	brickTexture, err := gg.LoadImage("textures/floor.png")
 	if err != nil {
-		return fmt.Errorf("could not load lava texture: %v", err)
+		return fmt.Errorf("could not load floor texture: %v", err)
 	}
 	grassTexture, err := gg.LoadImage("textures/wall.png")
 	if err != nil {
