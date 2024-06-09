@@ -11,8 +11,8 @@ func main() {
 	width, height := 200, 200
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
-	floorColor1 := color.RGBA{200, 200, 200, 255} // Light gray
-	floorColor2 := color.RGBA{210, 210, 210, 255} // Very light gray
+	floorColor1 := color.RGBA{140, 140, 140, 255} // Light gray
+	floorColor2 := color.RGBA{145, 145, 145, 255} // Very light gray
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
