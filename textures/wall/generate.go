@@ -24,7 +24,7 @@ func main() {
 		}
 	}
 
-	f, _ := os.Create("wall.png")
+	f, _ := os.Create("textures/wall.png")
 	defer f.Close()
 	png.Encode(f, img)
 }
