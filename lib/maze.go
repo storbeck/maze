@@ -1,19 +1,16 @@
-package main
+package mazelib
 
 import (
 	"fmt"
 	"math/rand"
-	"os"
-	"strconv"
-	"strings"
 	"time"
 )
 
 // Cell represents each cell in the maze
 type Cell struct {
-	x, y    int
-	walls   [4]bool // Top, Right, Bottom, Left
-	visited bool
+	X, Y    int
+	Walls   [4]bool // Top, Right, Bottom, Left
+	Visited bool
 }
 
 // Direction constants
@@ -26,25 +23,27 @@ const (
 
 // Maze represents the maze grid
 type Maze struct {
-	width, height int
-	grid          [][]Cell
+	Width, Height int
+	Grid          [][]Cell
 }
 
+// NewMaze initializes a new maze with given width and height
 func NewMaze(width, height int) *Maze {
 	grid := make([][]Cell, height)
 	for y := range grid {
 		grid[y] = make([]Cell, width)
 		for x := range grid[y] {
-			grid[y][x] = Cell{x: x, y: y, walls: [4]bool{true, true, true, true}, visited: false}
+			grid[y][x] = Cell{X: x, Y: y, Walls: [4]bool{true, true, true, true}, Visited: false}
 		}
 	}
-	return &Maze{width: width, height: height, grid: grid}
+	return &Maze{Width: width, Height: height, Grid: grid}
 }
 
+// Generate generates the maze using a randomized depth-first search
 func (m *Maze) Generate() {
 	stack := []*Cell{}
-	start := &m.grid[0][0]
-	start.visited = true
+	start := &m.Grid[0][0]
+	start.Visited = true
 	stack = append(stack, start)
 
 	rand.Seed(time.Now().UnixNano())
@@ -58,7 +57,7 @@ func (m *Maze) Generate() {
 			// Remove the wall between the current cell and the chosen neighbor
 			m.removeWall(current, next)
 			// Mark the neighbor as visited by pushing it to the stack
-			next.visited = true
+			next.Visited = true
 			stack = append(stack, next)
 		} else {
 			// Backtrack
@@ -80,9 +79,9 @@ func (m *Maze) getUnvisitedNeighbors(c *Cell) []*Cell {
 	}
 
 	for _, d := range directions {
-		nx, ny := c.x+d.dx, c.y+d.dy
-		if nx >= 0 && nx < m.width && ny >= 0 && ny < m.height && !m.grid[ny][nx].visited {
-			neighbors = append(neighbors, &m.grid[ny][nx])
+		nx, ny := c.X+d.dx, c.Y+d.dy
+		if nx >= 0 && nx < m.Width && ny >= 0 && ny < m.Height && !m.Grid[ny][nx].Visited {
+			neighbors = append(neighbors, &m.Grid[ny][nx])
 		}
 	}
 
@@ -90,48 +89,49 @@ func (m *Maze) getUnvisitedNeighbors(c *Cell) []*Cell {
 }
 
 func (m *Maze) removeWall(c1, c2 *Cell) {
-	if c1.x == c2.x {
-		if c1.y < c2.y {
-			c1.walls[Bottom] = false
-			c2.walls[Top] = false
+	if c1.X == c2.X {
+		if c1.Y < c2.Y {
+			c1.Walls[Bottom] = false
+			c2.Walls[Top] = false
 		} else {
-			c1.walls[Top] = false
-			c2.walls[Bottom] = false
+			c1.Walls[Top] = false
+			c2.Walls[Bottom] = false
 		}
 	} else {
-		if c1.x < c2.x {
-			c1.walls[Right] = false
-			c2.walls[Left] = false
+		if c1.X < c2.X {
+			c1.Walls[Right] = false
+			c2.Walls[Left] = false
 		} else {
-			c1.walls[Left] = false
-			c2.walls[Right] = false
+			c1.Walls[Left] = false
+			c2.Walls[Right] = false
 		}
 	}
 }
 
+// Print prints the maze in the console
 func (m *Maze) Print() {
 	// Represent the maze with walls and paths
-	mazeRep := make([][]rune, m.height*2+1)
+	mazeRep := make([][]rune, m.Height*2+1)
 	for i := range mazeRep {
-		mazeRep[i] = make([]rune, m.width*2+1)
+		mazeRep[i] = make([]rune, m.Width*2+1)
 		for j := range mazeRep[i] {
 			mazeRep[i][j] = '█' // Initialize all cells as walls
 		}
 	}
 
-	for y, row := range m.grid {
+	for y, row := range m.Grid {
 		for x, cell := range row {
 			mazeRep[y*2+1][x*2+1] = ' ' // Path
-			if !cell.walls[Top] {
+			if !cell.Walls[Top] {
 				mazeRep[y*2][x*2+1] = ' ' // Path
 			}
-			if !cell.walls[Right] {
+			if !cell.Walls[Right] {
 				mazeRep[y*2+1][x*2+2] = ' ' // Path
 			}
-			if !cell.walls[Bottom] {
+			if !cell.Walls[Bottom] {
 				mazeRep[y*2+2][x*2+1] = ' ' // Path
 			}
-			if !cell.walls[Left] {
+			if !cell.Walls[Left] {
 				mazeRep[y*2+1][x*2] = ' ' // Path
 			}
 		}
@@ -139,40 +139,10 @@ func (m *Maze) Print() {
 
 	// Mark entrance and exit
 	mazeRep[1][1] = 'E'                      // Entrance
-	mazeRep[m.height*2-1][m.width*2-1] = 'X' // Exit
+	mazeRep[m.Height*2-1][m.Width*2-1] = 'X' // Exit
 
 	// Print to console
 	for _, row := range mazeRep {
 		fmt.Println(string(row))
 	}
-}
-
-func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: ./maze <size>")
-		return
-	}
-
-	size := os.Args[1]
-	dimensions := strings.Split(size, "x")
-	if len(dimensions) != 2 {
-		fmt.Println("Invalid size format. Use <width>x<height> (e.g., 5x5, 10x10)")
-		return
-	}
-
-	width, err := strconv.Atoi(dimensions[0])
-	if err != nil || width <= 0 {
-		fmt.Println("Invalid width.")
-		return
-	}
-
-	height, err := strconv.Atoi(dimensions[1])
-	if err != nil || height <= 0 {
-		fmt.Println("Invalid height.")
-		return
-	}
-
-	maze := NewMaze(width, height)
-	maze.Generate()
-	maze.Print()
 }
