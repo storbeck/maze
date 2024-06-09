@@ -39,55 +39,87 @@ func NewMaze(width, height int) *Maze {
 	return &Maze{Width: width, Height: height, Grid: grid}
 }
 
-// Generate generates the maze using a randomized Prim's algorithm
+// Generate generates the maze using the Hunt-and-Kill algorithm
 func (m *Maze) Generate() {
-	wallList := []struct {
-		x1, y1, x2, y2 int
-	}{}
 	rand.Seed(time.Now().UnixNano())
-
-	// Start with a random cell
 	startX, startY := rand.Intn(m.Width), rand.Intn(m.Height)
-	m.Grid[startY][startX].Visited = true
-	m.addWallsToList(startX, startY, &wallList)
+	current := &m.Grid[startY][startX]
+	current.Visited = true
 
-	for len(wallList) > 0 {
-		// Choose a random wall from the list
-		index := rand.Intn(len(wallList))
-		wall := wallList[index]
-		wallList = append(wallList[:index], wallList[index+1:]...)
-
-		if m.isValidWall(wall.x1, wall.y1, wall.x2, wall.y2) {
-			m.removeWall(&m.Grid[wall.y1][wall.x1], &m.Grid[wall.y2][wall.x2])
-			m.Grid[wall.y2][wall.x2].Visited = true
-			m.addWallsToList(wall.x2, wall.y2, &wallList)
+	for {
+		neighbors := m.getUnvisitedNeighbors(current)
+		if len(neighbors) > 0 {
+			next := neighbors[rand.Intn(len(neighbors))]
+			m.removeWall(current, next)
+			next.Visited = true
+			current = next
+		} else {
+			found := false
+			for y := 0; y < m.Height; y++ {
+				for x := 0; x < m.Width; x++ {
+					if !m.Grid[y][x].Visited && len(m.getVisitedNeighbors(&m.Grid[y][x])) > 0 {
+						current = &m.Grid[y][x]
+						current.Visited = true
+						visitedNeighbors := m.getVisitedNeighbors(current)
+						next := visitedNeighbors[rand.Intn(len(visitedNeighbors))]
+						m.removeWall(current, next)
+						found = true
+						break
+					}
+				}
+				if found {
+					break
+				}
+			}
+			if !found {
+				break
+			}
 		}
 	}
 }
 
-func (m *Maze) addWallsToList(x, y int, wallList *[]struct{ x1, y1, x2, y2 int }) {
+func (m *Maze) getUnvisitedNeighbors(c *Cell) []*Cell {
+	neighbors := []*Cell{}
 	directions := []struct {
 		dx, dy int
+		dir    int
 	}{
-		{0, -1}, // Top
-		{1, 0},  // Right
-		{0, 1},  // Bottom
-		{-1, 0}, // Left
+		{0, -1, Top},
+		{1, 0, Right},
+		{0, 1, Bottom},
+		{-1, 0, Left},
 	}
 
 	for _, d := range directions {
-		nx, ny := x+d.dx, y+d.dy
+		nx, ny := c.X+d.dx, c.Y+d.dy
 		if nx >= 0 && nx < m.Width && ny >= 0 && ny < m.Height && !m.Grid[ny][nx].Visited {
-			*wallList = append(*wallList, struct{ x1, y1, x2, y2 int }{x, y, nx, ny})
+			neighbors = append(neighbors, &m.Grid[ny][nx])
 		}
 	}
+
+	return neighbors
 }
 
-func (m *Maze) isValidWall(x1, y1, x2, y2 int) bool {
-	if x2 < 0 || x2 >= m.Width || y2 < 0 || y2 >= m.Height {
-		return false
+func (m *Maze) getVisitedNeighbors(c *Cell) []*Cell {
+	neighbors := []*Cell{}
+	directions := []struct {
+		dx, dy int
+		dir    int
+	}{
+		{0, -1, Top},
+		{1, 0, Right},
+		{0, 1, Bottom},
+		{-1, 0, Left},
 	}
-	return m.Grid[y2][x2].Visited == false
+
+	for _, d := range directions {
+		nx, ny := c.X+d.dx, c.Y+d.dy
+		if nx >= 0 && nx < m.Width && ny >= 0 && ny < m.Height && m.Grid[ny][nx].Visited {
+			neighbors = append(neighbors, &m.Grid[ny][nx])
+		}
+	}
+
+	return neighbors
 }
 
 func (m *Maze) removeWall(c1, c2 *Cell) {
