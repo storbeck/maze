@@ -2,6 +2,8 @@
 
 This project generates mazes and displays them in 2D and 3D with various textures. 
 
+![maze](https://github.com/storbeck/maze/assets/449874/bc4cb407-ea7f-4f25-9121-fc3de7ec8a54)
+
 ## Setup
 
 Ensure you have [Go](https://golang.org/dl/) installed on your system.
