@@ -1,5 +1,6 @@
 mazegen
 mazeascii
 maze2d
-**.txt
-**.png
+maze.txt
+maze.png
+textures/*.png

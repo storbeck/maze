@@ -17,7 +17,7 @@ app.get('/maze', (req, res) => {
         return;
     }
 
-    const mazeGen = spawn('../bin/mazegen', ['-size', `${width}x${height}`]);
+    const mazeGen = spawn(path.join(__dirname, '..', 'bin', 'mazegen'), ['-size', `${width}x${height}`]);
 
     let mazeData = '';
 
