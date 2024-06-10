@@ -2,6 +2,12 @@
 
 This is a simple maze game implemented using Node.js and HTML5 Canvas. The game supports two players: Player 1 uses the arrow keys, and Player 2 uses the WASD keys. The objective is to navigate through the maze and reach the exit. When a player reaches the exit, a "YOU WIN" message is displayed along with a confetti effect indicating the winner.
 
+
+
+https://github.com/storbeck/maze/assets/449874/fd502851-761f-4b7e-9aef-69408bde36e9
+
+
+
 ## Features
 - Generate a new maze of specified size.
 - Two-player support with different controls and colors.
