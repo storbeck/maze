@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mazeCanvas"></canvas>
+    <script>
+        const cellSize = 20;
+        const playerSize = cellSize * 0.8;
+        let playerX, playerY, mazeMap, ctx, canvas;
+
+        async function fetchMaze() {
+            const params = new URLSearchParams(window.location.search);
+            const size = params.get('size') || '20x20';
+            const response = await fetch(`/maze?size=${size}`);
+            const data = await response.json();
+            return data.mazeMap;
+        }
+
+        function initializePlayerPosition() {
+            for (let row = 0; row < mazeMap.length; row++) {
+                for (let col = 0; col < mazeMap[0].length; col++) {
+                    if (mazeMap[row][col] === 'E') {
+                        playerX = col * cellSize + cellSize / 2;
+                        playerY = row * cellSize + cellSize / 2;
+                        return;
+                    }
+                }
+            }
+        }
+
+        function drawMaze() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const rows = mazeMap.length;
+            const cols = mazeMap[0].length;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    if (mazeMap[row][col] === '█') {
+                        ctx.fillStyle = 'black';
+                    } else if (mazeMap[row][col] === 'E') {
+                        ctx.fillStyle = 'green';
+                    } else if (mazeMap[row][col] === 'X') {
+                        ctx.fillStyle = 'red';
+                    } else {
+                        ctx.fillStyle = 'white';
+                    }
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        function drawPlayer() {
+            ctx.fillStyle = 'blue';
+            ctx.beginPath();
+            ctx.arc(playerX, playerY, playerSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function movePlayer(dx, dy) {
+            const newX = playerX + dx * cellSize;
+            const newY = playerY + dy * cellSize;
+            const col = Math.floor((newX - cellSize / 2) / cellSize);
+            const row = Math.floor((newY - cellSize / 2) / cellSize);
+
+            if (col >= 0 && col < mazeMap[0].length && row >= 0 && row < mazeMap.length && mazeMap[row][col] !== '█') {
+                playerX = newX;
+                playerY = newY;
+                draw();
+            }
+        }
+
+        function draw() {
+            drawMaze();
+            drawPlayer();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') movePlayer(0, -1);
+            if (e.key === 'ArrowDown') movePlayer(0, 1);
+            if (e.key === 'ArrowLeft') movePlayer(-1, 0);
+            if (e.key === 'ArrowRight') movePlayer(1, 0);
+        });
+
+        fetchMaze().then(maze => {
+            mazeMap = maze;
+            canvas = document.getElementById('mazeCanvas');
+            ctx = canvas.getContext('2d');
+            const rows = mazeMap.length;
+            const cols = mazeMap[0].length;
+            canvas.width = cols * cellSize;
+            canvas.height = rows * cellSize;
+            initializePlayerPosition();
+            draw();
+        });
+    </script>
+</body>
+</html>
