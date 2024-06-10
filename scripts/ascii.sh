@@ -7,4 +7,4 @@ if [ -z "$SIZE" ]; then
 fi
 
 ./bin/mazegen -size $SIZE > maze.txt
-./bin/maze2d maze.txt
+./bin/mazeascii maze.txt
