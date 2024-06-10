@@ -1,5 +1,11 @@
 # Maze Generator and Viewer
 
+
+
+https://github.com/storbeck/maze/assets/449874/a9d34641-b42e-44bc-8a47-9cc261acef9f
+
+
+
 This project provides tools to generate and view mazes in both ASCII and 2D formats. The mazes are generated using a challenging Hunt-and-Kill algorithm to ensure a complex and engaging puzzle experience.
 
 ## Features
