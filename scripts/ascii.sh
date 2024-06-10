@@ -6,5 +6,5 @@ if [ -z "$SIZE" ]; then
     SIZE=10x10
 fi
 
-./mazegen -size $SIZE > maze.txt
-./maze2d maze.txt
+./bin/mazegen -size $SIZE > maze.txt
+./bin/maze2d maze.txt
