@@ -9,10 +9,11 @@ textures:
 	go run textures/exit/generate.go
 
 build:
-	go build -o mazegen gen/maze.go
-	go build -o maze2d 2d/maze.go
-	go build -o maze3d 3d/maze.go
+	go build -o bin/mazegen gen/maze.go
+	go build -o bin/mazeascii ascii/maze.go
+	go build -o bin/maze2d 2d/maze.go
 
 clean:
-	rm -f mazegen maze2d maze3d
+	rm -f mazegen mazeascii maze2d
 	rm -f textures/*.png
+	rm -f maze.txt maze.png
