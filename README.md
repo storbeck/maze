@@ -1,14 +1,49 @@
-# Maze Generator
+# Maze Generator and Viewer
 
-This project generates mazes and displays them in 2D and 3D with various textures. 
+This project provides tools to generate and view mazes in both ASCII and 2D formats. The mazes are generated using a challenging Hunt-and-Kill algorithm to ensure a complex and engaging puzzle experience.
 
-![maze](https://github.com/storbeck/maze/assets/449874/bc4cb407-ea7f-4f25-9121-fc3de7ec8a54)
+## Features
 
-## Setup
+- **Maze Generation**: Generate complex mazes using the Hunt-and-Kill algorithm.
+- **ASCII Viewer**: View the generated mazes in a simple ASCII format.
+- **2D Viewer**: View the generated mazes in a top-down 2D style with textures.
 
-Ensure you have [Go](https://golang.org/dl/) installed on your system.
+## Prerequisites
 
-### Usage
+- Go 1.16 or higher
+
+## Directory Structure
+
+```
+.
+├── 2d
+│   └── maze.go            # Main program for generating and viewing mazes in 2D format with textures
+├── ascii
+│   └── maze.go            # Main program for generating and viewing mazes in ASCII format
+├── gen
+│   └── maze.go            # Maze generation logic using the Hunt-and-Kill algorithm
+├── lib
+│   └── maze.go            # Shared library for maze generation algorithms
+├── scripts
+│   ├── 2d.sh              # Script to generate a new 2D maze and view it
+│   └── ascii.sh           # Script to generate a new ASCII maze and view it
+├── textures
+│   ├── entrance
+│   │   └── generate.go    # Generator for the entrance texture
+│   ├── exit
+│   │   └── generate.go    # Generator for the exit texture
+│   ├── floor
+│   │   └── generate.go    # Generator for the floor texture
+│   └── wall
+│       └── generate.go    # Generator for the wall texture
+├── bin                    # Directory for compiled binaries
+├── Makefile               # Makefile for building the project and generating textures
+├── README.md              # This README file
+├── go.mod                 # Go module file
+└── go.sum                 # Go dependencies file
+```
+
+## Installation
 
 1. **Clone the repository**:
    ```sh
@@ -16,57 +51,41 @@ Ensure you have [Go](https://golang.org/dl/) installed on your system.
    cd maze
    ```
 
-2. **Generate the textures and build the project**:
+2. **Build and generate textures**:
    ```sh
-   make && ./new-3d.sh
+   make
    ```
-   This command will:
-   - Generate new textures.
-   - Build the `mazegen`, `maze2d`, and `maze3d` executables.
-   - Generate a new 3D maze image and open it.
 
-3. **Build the project without generating new textures for 2D**:
-   ```sh
-   make build && ./new-2d.sh
-   ```
-   This command will:
-   - Build the `mazegen`, `maze2d`, and `maze3d` executables without generating new textures.
-   - Generate a new 2D maze image and open it.
+## Usage
 
-### Makefile Commands
+### Generate and View a New 2D Maze
 
-- `make`: Generates new textures and builds the project.
-- `make build`: Builds the project without generating new textures.
-- `make clean`: Cleans up the generated executables and textures.
+To generate a new maze, generate textures, and view it in 2D:
 
-### Texture Generators
-
-- **Floor Texture**: Generates a tiled floor texture.
-- **Wall Texture**: Generates a gradient wall texture.
-- **Lava Texture**: Generates a noisy lava-like texture.
-- **Polka Dot Texture**: Generates a polka dot pattern texture.
-
-### Shell Scripts
-
-- **`new-3d.sh`**: Generates a new maze, creates new textures, generates a 3D image, and opens it.
-- **`new-2d.sh`**: Generates a new maze and generates a 2D image without creating new textures.
-
-### Dependencies
-
-- [Go](https://golang.org/dl/)
-- [gg](https://github.com/fogleman/gg) library for graphics:
-  ```sh
-  go get -u github.com/fogleman/gg
-  ```
-
-### Example
-
-To generate and view a new 3D maze with textures:
 ```sh
-make && ./new-3d.sh
+make && ./scripts/2d.sh
 ```
 
-To generate and view a new 2D maze without generating new textures:
+### Generate and View a New ASCII Maze
+
+To generate a new maze and view it in ASCII without regenerating textures:
+
 ```sh
-make build && ./new-2d.sh
+make build && ./scripts/ascii.sh
+```
+
+## Generating Textures Only
+
+If you need to regenerate the textures separately, run:
+
+```sh
+make textures
+```
+
+## Cleaning Up
+
+To clean up the generated files, run:
+
+```sh
+make clean
 ```
