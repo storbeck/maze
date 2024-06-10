@@ -14,6 +14,6 @@ build:
 	go build -o bin/maze2d 2d/maze.go
 
 clean:
-	rm -f mazegen mazeascii maze2d
+	rm -f bin/mazegen bin/mazeascii bin/maze2d
 	rm -f textures/*.png
 	rm -f maze.txt maze.png
