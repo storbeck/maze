@@ -8,4 +8,4 @@ fi
 
 ./bin/mazegen -size $SIZE > maze.txt
 ./bin/maze2d maze.txt maze.png
-open maze.png
+imgcat maze.png
