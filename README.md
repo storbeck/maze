@@ -2,7 +2,11 @@
 
 
 
-https://github.com/storbeck/maze/assets/449874/a9d34641-b42e-44bc-8a47-9cc261acef9f
+
+
+https://github.com/storbeck/maze/assets/449874/6ebdc8e7-90c8-4434-a180-d2a9afca3df9
+
+
 
 
 
