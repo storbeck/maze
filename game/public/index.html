@@ -243,7 +243,7 @@
 
           if (mazeMap[row][col] === "X") {
             player.endTime = Date.now();
-            winGame(player.name);
+            winGame(player);
           }
         }
       }
@@ -255,18 +255,15 @@
       drawPlayer(player2);
     }
 
-    function winGame(playerName) {
-      const currentPlayer = playerName === player1.name ? player1 : player2;
-      const otherPlayer = playerName === player1.name ? player2 : player1;
-
+    function winGame(player) {
       if (!firstPlayerFinished) {
         firstPlayerFinished = true;
-        firstPlayer = currentPlayer;
-        const winnerTime = ((currentPlayer.endTime - currentPlayer.startTime) / 1000).toFixed(2);
+        firstPlayer = player;
+        const winnerTime = ((player.endTime - player.startTime) / 1000).toFixed(2);
 
         const messageDiv = document.getElementById("message");
         messageDiv.innerHTML = `
-          ${currentPlayer.name} WINS!<br>
+          ${player.name} WINS!<br>
           Time: ${winnerTime} seconds
         `;
         messageDiv.style.display = "block";
@@ -296,24 +293,23 @@
           }, i * 1000);
         }
 
-        saveScore(currentPlayer.name, winnerTime);
-      } else {
+        saveScore(player.name, winnerTime);
+      } else if (player !== firstPlayer) {
         const winnerTime = ((firstPlayer.endTime - firstPlayer.startTime) / 1000).toFixed(2);
-        const secondTime = ((currentPlayer.endTime - currentPlayer.startTime) / 1000).toFixed(2);
+        const secondTime = ((player.endTime - player.startTime) / 1000).toFixed(2);
         const timeDifference = (secondTime - winnerTime).toFixed(2);
 
         const messageDiv = document.getElementById("message");
         messageDiv.innerHTML = `
           ${firstPlayer.name} WINS!<br>
           Time: ${winnerTime} seconds<br>
-          ${currentPlayer.name} came in 2nd!<br>
+          ${player.name} came in 2nd!<br>
           Time: ${secondTime} seconds<br>
           +${timeDifference} seconds
         `;
         messageDiv.style.display = "block";
 
-        saveScore(firstPlayer.name, winnerTime);
-        saveScore(currentPlayer.name, secondTime);
+        saveScore(player.name, secondTime);
       }
     }
 
