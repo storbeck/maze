@@ -8,33 +8,30 @@
 </head>
 <body>
   <div class="form-container">
-    <form id="settingsForm">
-      <div>
-        <h3>Player 1</h3>
-        <label for="player1Name">Name:</label>
-        <input type="text" id="player1Name" value="Player 1">
-        <label for="player1Color">Color:</label>
+    <form id="settingsForm" class="game-form">
+      <div class="player-settings">
+        <label for="player1Name">Player 1:</label>
+        <input type="text" id="player1Name" value="Player 1" placeholder="Name">
         <input type="color" id="player1Color" value="#0000FF">
       </div>
-      <div>
-        <h3>Player 2</h3>
-        <label for="player2Name">Name:</label>
-        <input type="text" id="player2Name" value="Player 2">
-        <label for="player2Color">Color:</label>
+      <div class="player-settings">
+        <label for="player2Name">Player 2:</label>
+        <input type="text" id="player2Name" value="Player 2" placeholder="Name">
         <input type="color" id="player2Color" value="#FFA500">
       </div>
-      <div>
-        <h3>Maze Settings</h3>
-        <label for="mazeSize">Size (NxM):</label>
+      <div class="maze-settings">
+        <label for="mazeSize">Maze Size:</label>
         <input type="text" id="mazeSize" value="10x10" pattern="\d+x\d+" title="Format: NxM (e.g., 10x10)">
       </div>
-      <div>
-      <button type="submit">Start Game</button>
-      <button type="button" onclick="resetScores()">Reset Scores</button>
-    </div>
+      <div class="form-buttons">
+        <button type="submit" class="btn">Start Game</button>
+        <button type="button" class="btn" onclick="resetScores()">Reset Scores</button>
+      </div>
     </form>
   </div>
-  <canvas id="mazeCanvas"></canvas>
+  <div class="canvas-container">
+    <canvas id="mazeCanvas"></canvas>
+  </div>
   <div id="message"></div>
   <div id="scoreboard">
     <h3>Scoreboard</h3>

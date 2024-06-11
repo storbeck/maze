@@ -1,8 +1,105 @@
-canvas {
-  border: 1px solid black;
-  display: block;
-  margin: 20px auto;
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
 }
+
+h3 {
+  font-family: 'Verdana', sans-serif;
+  color: #444;
+}
+
+.form-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px 20px;
+  z-index: 1000;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+}
+
+.game-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.player-settings,
+.maze-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+label {
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="color"],
+input[type="text"] {
+  width: 100px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="color"] {
+  padding: 5px;
+  height: 30px;
+}
+
+.form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.9em;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-grow: 1;
+}
+
+#mazeCanvas {
+  border: 1px solid #ccc;
+  display: block;
+}
+
 #message {
   display: none;
   position: absolute;
@@ -19,6 +116,7 @@ canvas {
   z-index: 1000;
   animation: popUp 0.5s ease-in-out, fadeOut 5s ease-in-out 5s forwards;
 }
+
 @keyframes popUp {
   0% {
     transform: translate(-50%, -50%) scale(0);
@@ -27,46 +125,39 @@ canvas {
     transform: translate(-50%, -50%) scale(1);
   }
 }
+
 @keyframes fadeOut {
   to {
     opacity: 0;
   }
 }
-.form-container {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px;
-}
-.form-container form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.form-container form label {
-  margin: 5px 0;
-}
-.form-container form input[type="text"],
-.form-container form input[type="color"],
-.form-container form input[type="number"] {
-  margin-bottom: 10px;
-}
-#settingsForm {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-}
+
 #scoreboard {
-  width: 50%;
+  width: 90%;
+  max-width: 600px;
   margin: 20px auto;
   text-align: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
 }
+
 #scoreboard table {
   width: 100%;
   border-collapse: collapse;
 }
+
 #scoreboard th, #scoreboard td {
-  border: 1px solid #000;
+  border: 1px solid #ddd;
   padding: 8px;
+}
+
+#scoreboard th {
+  background-color: #007bff;
+  color: white;
+}
+
+#scoreboard td {
+  background-color: #f9f9f9;
 }
