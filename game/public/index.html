@@ -7,6 +7,8 @@
   <style>
     canvas {
       border: 1px solid black;
+      display: block;
+      margin: 20px auto;
     }
     #message {
       display: none;
@@ -37,9 +39,43 @@
         opacity: 0;
       }
     }
+    .form-container {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px;
+    }
+    .form-container form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .form-container form label {
+      margin: 5px 0;
+    }
+    .form-container form input[type="text"],
+    .form-container form input[type="color"] {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
+  <div class="form-container">
+    <form id="player1Form">
+      <h3>Player 1</h3>
+      <label for="player1Name">Name:</label>
+      <input type="text" id="player1Name" value="Player 1">
+      <label for="player1Color">Color:</label>
+      <input type="color" id="player1Color" value="#0000FF">
+    </form>
+    <form id="player2Form">
+      <h3>Player 2</h3>
+      <label for="player2Name">Name:</label>
+      <input type="text" id="player2Name" value="Player 2">
+      <label for="player2Color">Color:</label>
+      <input type="color" id="player2Color" value="#FFA500">
+    </form>
+    <button id="startGameButton">Start Game</button>
+  </div>
   <canvas id="mazeCanvas"></canvas>
   <div id="message"></div>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
@@ -47,8 +83,8 @@
     const cellSize = 20;
     const playerSize = cellSize * 0.8;
     let mazeMap, ctx, canvas;
-    let player1 = { x: 0, y: 0, color: "blue", startTime: null, endTime: null };
-    let player2 = { x: 0, y: 0, color: "orange", startTime: null, endTime: null };
+    let player1 = { x: 0, y: 0, color: "blue", startTime: null, endTime: null, name: "Player 1" };
+    let player2 = { x: 0, y: 0, color: "orange", startTime: null, endTime: null, name: "Player 2" };
     let firstPlayerFinished = false;
     let firstPlayer = null;
 
@@ -122,7 +158,7 @@
 
           if (mazeMap[row][col] === "X") {
             player.endTime = Date.now();
-            winGame(player === player1 ? "Player 1" : "Player 2");
+            winGame(player.name);
           }
         }
       }
@@ -134,18 +170,18 @@
       drawPlayer(player2);
     }
 
-    function winGame(player) {
-      const currentPlayer = player === "Player 1" ? player1 : player2;
-      const otherPlayer = player === "Player 1" ? player2 : player1;
+    function winGame(playerName) {
+      const currentPlayer = playerName === player1.name ? player1 : player2;
+      const otherPlayer = playerName === player1.name ? player2 : player1;
 
       if (!firstPlayerFinished) {
         firstPlayerFinished = true;
-        firstPlayer = player;
+        firstPlayer = currentPlayer;
         const winnerTime = ((currentPlayer.endTime - currentPlayer.startTime) / 1000).toFixed(2);
 
         const messageDiv = document.getElementById("message");
         messageDiv.innerHTML = `
-          ${player} WINS!<br>
+          ${currentPlayer.name} WINS!<br>
           Time: ${winnerTime} seconds
         `;
         messageDiv.style.display = "block";
@@ -175,21 +211,40 @@
           }, i * 1000);
         }
       } else {
-        const winnerTime = ((firstPlayer === "Player 1" ? player1.endTime : player2.endTime) - (firstPlayer === "Player 1" ? player1.startTime : player2.startTime)) / 1000;
+        const winnerTime = ((firstPlayer.endTime - firstPlayer.startTime) / 1000).toFixed(2);
         const secondTime = ((currentPlayer.endTime - currentPlayer.startTime) / 1000).toFixed(2);
         const timeDifference = (secondTime - winnerTime).toFixed(2);
 
         const messageDiv = document.getElementById("message");
         messageDiv.innerHTML = `
-          ${firstPlayer} WINS!<br>
-          Time: ${winnerTime.toFixed(2)} seconds<br>
-          ${player} came in 2nd!<br>
+          ${firstPlayer.name} WINS!<br>
+          Time: ${winnerTime} seconds<br>
+          ${currentPlayer.name} came in 2nd!<br>
           Time: ${secondTime} seconds<br>
           +${timeDifference} seconds
         `;
         messageDiv.style.display = "block";
       }
     }
+
+    document.getElementById("startGameButton").addEventListener("click", () => {
+      player1.name = document.getElementById("player1Name").value;
+      player1.color = document.getElementById("player1Color").value;
+      player2.name = document.getElementById("player2Name").value;
+      player2.color = document.getElementById("player2Color").value;
+
+      fetchMaze().then((maze) => {
+        mazeMap = maze;
+        canvas = document.getElementById("mazeCanvas");
+        ctx = canvas.getContext("2d");
+        const rows = mazeMap.length;
+        const cols = mazeMap[0].length;
+        canvas.width = cols * cellSize;
+        canvas.height = rows * cellSize;
+        initializePlayerPositions();
+        draw();
+      });
+    });
 
     window.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -218,18 +273,6 @@
           movePlayer(player2, 1, 0);
           break;
       }
-    });
-
-    fetchMaze().then((maze) => {
-      mazeMap = maze;
-      canvas = document.getElementById("mazeCanvas");
-      ctx = canvas.getContext("2d");
-      const rows = mazeMap.length;
-      const cols = mazeMap[0].length;
-      canvas.width = cols * cellSize;
-      canvas.height = rows * cellSize;
-      initializePlayerPositions();
-      draw();
     });
   </script>
 </body>
