@@ -1,161 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Game</title>
-    <style>
-        canvas {
-            border: 1px solid black;
-        }
-        #message {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3em;
-            color: green;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maze Game</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+    #message {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 10px;
+      z-index: 1000;
+      animation: popUp 0.5s ease-in-out, fadeOut 5s ease-in-out 5s forwards;
+    }
+    @keyframes popUp {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-    <canvas id="mazeCanvas"></canvas>
-    <div id="message"></div>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
-    <script>
-        const cellSize = 20;
-        const playerSize = cellSize * 0.8;
-        let mazeMap, ctx, canvas;
-        let player1 = { x: 0, y: 0, color: 'blue' };
-        let player2 = { x: 0, y: 0, color: 'orange' };
+  <canvas id="mazeCanvas"></canvas>
+  <div id="message"></div>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <script>
+    const cellSize = 20;
+    const playerSize = cellSize * 0.8;
+    let mazeMap, ctx, canvas;
+    let player1 = { x: 0, y: 0, color: "blue", startTime: null, endTime: null };
+    let player2 = { x: 0, y: 0, color: "orange", startTime: null, endTime: null };
+    let firstPlayerFinished = false;
+    let firstPlayer = null;
 
-        async function fetchMaze() {
-            const params = new URLSearchParams(window.location.search);
-            const size = params.get('size') || '20x20';
-            const response = await fetch(`/maze?size=${size}`);
-            const data = await response.json();
-            return data.mazeMap;
+    async function fetchMaze() {
+      const params = new URLSearchParams(window.location.search);
+      const size = params.get("size") || "20x20";
+      const response = await fetch(`/maze?size=${size}`);
+      const data = await response.json();
+      return data.mazeMap;
+    }
+
+    function initializePlayerPositions() {
+      for (let row = 0; row < mazeMap.length; row++) {
+        for (let col = 0; col < mazeMap[0].length; col++) {
+          if (mazeMap[row][col] === "E") {
+            player1.x = col * cellSize + cellSize / 2;
+            player1.y = row * cellSize + cellSize / 2;
+            player2.x = col * cellSize + cellSize / 2;
+            player2.y = row * cellSize + cellSize / 2;
+            player1.startTime = player2.startTime = Date.now();
+            return;
+          }
         }
+      }
+    }
 
-        function initializePlayerPositions() {
-            for (let row = 0; row < mazeMap.length; row++) {
-                for (let col = 0; col < mazeMap[0].length; col++) {
-                    if (mazeMap[row][col] === 'E') {
-                        player1.x = col * cellSize + cellSize / 2;
-                        player1.y = row * cellSize + cellSize / 2;
-                        player2.x = col * cellSize + cellSize / 2;
-                        player2.y = row * cellSize + cellSize / 2;
-                        return;
-                    }
-                }
-            }
+    function drawMaze() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rows = mazeMap.length;
+      const cols = mazeMap[0].length;
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          if (mazeMap[row][col] === "█") {
+            ctx.fillStyle = "black";
+          } else if (mazeMap[row][col] === "E") {
+            ctx.fillStyle = "green";
+          } else if (mazeMap[row][col] === "X") {
+            ctx.fillStyle = "red";
+          } else {
+            ctx.fillStyle = "white";
+          }
+          ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
         }
+      }
+    }
 
-        function drawMaze() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const rows = mazeMap.length;
-            const cols = mazeMap[0].length;
+    function drawPlayer(player) {
+      ctx.fillStyle = player.color;
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, playerSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-            for (let row = 0; row < rows; row++) {
-                for (let col = 0; col < cols; col++) {
-                    if (mazeMap[row][col] === '█') {
-                        ctx.fillStyle = 'black';
-                    } else if (mazeMap[row][col] === 'E') {
-                        ctx.fillStyle = 'green';
-                    } else if (mazeMap[row][col] === 'X') {
-                        ctx.fillStyle = 'red';
-                    } else {
-                        ctx.fillStyle = 'white';
-                    }
-                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-                }
-            }
+    function movePlayer(player, dx, dy) {
+      const newX = player.x + dx * cellSize;
+      const newY = player.y + dy * cellSize;
+      const col = Math.floor((newX - cellSize / 2) / cellSize);
+      const row = Math.floor((newY - cellSize / 2) / cellSize);
+
+      if (
+        col >= 0 &&
+        col < mazeMap[0].length &&
+        row >= 0 &&
+        row < mazeMap.length
+      ) {
+        if (mazeMap[row][col] !== "█") {
+          player.x = newX;
+          player.y = newY;
+          draw();
+
+          if (mazeMap[row][col] === "X") {
+            player.endTime = Date.now();
+            winGame(player === player1 ? "Player 1" : "Player 2");
+          }
         }
+      }
+    }
 
-        function drawPlayer(player) {
-            ctx.fillStyle = player.color;
-            ctx.beginPath();
-            ctx.arc(player.x, player.y, playerSize / 2, 0, Math.PI * 2);
-            ctx.fill();
-        }
+    function draw() {
+      drawMaze();
+      drawPlayer(player1);
+      drawPlayer(player2);
+    }
 
-        function movePlayer(player, dx, dy) {
-            const newX = player.x + dx * cellSize;
-            const newY = player.y + dy * cellSize;
-            const col = Math.floor((newX - cellSize / 2) / cellSize);
-            const row = Math.floor((newY - cellSize / 2) / cellSize);
+    function winGame(player) {
+      const currentPlayer = player === "Player 1" ? player1 : player2;
+      const otherPlayer = player === "Player 1" ? player2 : player1;
 
-            if (col >= 0 && col < mazeMap[0].length && row >= 0 && row < mazeMap.length) {
-                if (mazeMap[row][col] !== '█') {
-                    player.x = newX;
-                    player.y = newY;
-                    draw();
+      if (!firstPlayerFinished) {
+        firstPlayerFinished = true;
+        firstPlayer = player;
+        const winnerTime = ((currentPlayer.endTime - currentPlayer.startTime) / 1000).toFixed(2);
 
-                    if (mazeMap[row][col] === 'X') {
-                        winGame(player === player1 ? 'Player 1' : 'Player 2');
-                    }
-                }
-            }
-        }
+        const messageDiv = document.getElementById("message");
+        messageDiv.innerHTML = `
+          ${player} WINS!<br>
+          Time: ${winnerTime} seconds
+        `;
+        messageDiv.style.display = "block";
 
-        function draw() {
-            drawMaze();
-            drawPlayer(player1);
-            drawPlayer(player2);
-        }
+        confetti({
+          particleCount: 200,
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          origin: {
+            x: Math.random(),
+            y: Math.random() - 0.2,
+          },
+        });
 
-        function winGame(player) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = `${player} WINS!`;
-            messageDiv.style.display = 'block';
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => {
             confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
+              particleCount: 100,
+              startVelocity: 30,
+              spread: 360,
+              origin: {
+                x: Math.random(),
+                y: Math.random() - 0.2,
+              },
             });
+          }, i * 1000);
         }
+      } else {
+        const winnerTime = ((firstPlayer === "Player 1" ? player1.endTime : player2.endTime) - (firstPlayer === "Player 1" ? player1.startTime : player2.startTime)) / 1000;
+        const secondTime = ((currentPlayer.endTime - currentPlayer.startTime) / 1000).toFixed(2);
+        const timeDifference = (secondTime - winnerTime).toFixed(2);
 
-        window.addEventListener('keydown', (e) => {
-            switch (e.key) {
-                case 'ArrowUp':
-                    movePlayer(player1, 0, -1);
-                    break;
-                case 'ArrowDown':
-                    movePlayer(player1, 0, 1);
-                    break;
-                case 'ArrowLeft':
-                    movePlayer(player1, -1, 0);
-                    break;
-                case 'ArrowRight':
-                    movePlayer(player1, 1, 0);
-                    break;
-                case 'w':
-                    movePlayer(player2, 0, -1);
-                    break;
-                case 's':
-                    movePlayer(player2, 0, 1);
-                    break;
-                case 'a':
-                    movePlayer(player2, -1, 0);
-                    break;
-                case 'd':
-                    movePlayer(player2, 1, 0);
-                    break;
-            }
-        });
+        const messageDiv = document.getElementById("message");
+        messageDiv.innerHTML = `
+          ${firstPlayer} WINS!<br>
+          Time: ${winnerTime.toFixed(2)} seconds<br>
+          ${player} came in 2nd!<br>
+          Time: ${secondTime} seconds<br>
+          +${timeDifference} seconds
+        `;
+        messageDiv.style.display = "block";
+      }
+    }
 
-        fetchMaze().then(maze => {
-            mazeMap = maze;
-            canvas = document.getElementById('mazeCanvas');
-            ctx = canvas.getContext('2d');
-            const rows = mazeMap.length;
-            const cols = mazeMap[0].length;
-            canvas.width = cols * cellSize;
-            canvas.height = rows * cellSize;
-            initializePlayerPositions();
-            draw();
-        });
-    </script>
+    window.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+          movePlayer(player1, 0, -1);
+          break;
+        case "ArrowDown":
+          movePlayer(player1, 0, 1);
+          break;
+        case "ArrowLeft":
+          movePlayer(player1, -1, 0);
+          break;
+        case "ArrowRight":
+          movePlayer(player1, 1, 0);
+          break;
+        case "w":
+          movePlayer(player2, 0, -1);
+          break;
+        case "s":
+          movePlayer(player2, 0, 1);
+          break;
+        case "a":
+          movePlayer(player2, -1, 0);
+          break;
+        case "d":
+          movePlayer(player2, 1, 0);
+          break;
+      }
+    });
+
+    fetchMaze().then((maze) => {
+      mazeMap = maze;
+      canvas = document.getElementById("mazeCanvas");
+      ctx = canvas.getContext("2d");
+      const rows = mazeMap.length;
+      const cols = mazeMap[0].length;
+      canvas.width = cols * cellSize;
+      canvas.height = rows * cellSize;
+      initializePlayerPositions();
+      draw();
+    });
+  </script>
 </body>
 </html>
