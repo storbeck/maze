@@ -63,6 +63,11 @@ window.addEventListener("keydown", (e) => {
     case "d":
       movePlayer(player2, 1, 0);
       break;
+    case "Delete":
+    case "Backspace":
+      // Simulate form submit
+      document.getElementById("settingsForm").dispatchEvent(new Event("submit"));
+      break;
   }
 });
 
