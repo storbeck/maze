@@ -18,21 +18,3 @@ function loadSettings() {
     localStorage.setItem('mazeSize', document.getElementById('mazeSize').value);
   }
   
-  function saveScore(playerName, time) {
-    const scores = JSON.parse(localStorage.getItem('scores')) || {};
-    if (!scores[playerName]) {
-      scores[playerName] = { winCount: 0, bestTime: parseFloat(time) };
-    }
-    scores[playerName].winCount++;
-    if (parseFloat(time) < scores[playerName].bestTime) {
-      scores[playerName].bestTime = parseFloat(time);
-    }
-    localStorage.setItem('scores', JSON.stringify(scores));
-    updateScoreboard();
-  }
-  
-  function resetScores() {
-    localStorage.clear();
-    location.reload();
-  }
-  

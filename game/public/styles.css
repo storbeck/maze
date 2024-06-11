@@ -131,33 +131,3 @@ input[type="color"] {
     opacity: 0;
   }
 }
-
-#scoreboard {
-  width: 90%;
-  max-width: 600px;
-  margin: 20px auto;
-  text-align: center;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 20px;
-}
-
-#scoreboard table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-#scoreboard th, #scoreboard td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#scoreboard th {
-  background-color: #007bff;
-  color: white;
-}
-
-#scoreboard td {
-  background-color: #f9f9f9;
-}
