@@ -1,101 +1,53 @@
-# Maze Generator and Viewer
+# Maze Image CLI
 
-
-
-
-
-https://github.com/storbeck/maze/assets/449874/6ebdc8e7-90c8-4434-a180-d2a9afca3df9
-
-
-
-
-
-This project provides tools to generate and view mazes in both ASCII and 2D formats. The mazes are generated using a challenging Hunt-and-Kill algorithm to ensure a complex and engaging puzzle experience.
+A lightweight command-line tool that generates maze PNG images using the Hunt-and-Kill algorithm. Width, height, cell size, and output path are all configurable flags so you can quickly create printable mazes without running any additional UI or viewer.
 
 ## Features
+- Hunt-and-Kill maze generation implemented in `lib/maze.go`.
+- Single CLI (`cmd/mazeimg`) that both generates the maze and renders it as a PNG.
+- Configurable image size through `-width`, `-height`, and `-cell` flags.
 
-- **Maze Generation**: Generate complex mazes using the Hunt-and-Kill algorithm.
-- **ASCII Viewer**: View the generated mazes in a simple ASCII format.
-- **2D Viewer**: View the generated mazes in a top-down 2D style with textures.
+## Requirements
+- Go 1.20 or newer
 
-## Prerequisites
+## Getting Started
+```sh
+git clone https://github.com/storbeck/maze.git
+cd maze
+```
 
-- Go 1.16 or higher
+### Build once
+```sh
+go build -o bin/mazeimg ./cmd/mazeimg
+```
+
+### Or run directly
+```sh
+go run ./cmd/mazeimg -width 20 -height 20 -cell 16 -out maze.png
+```
+
+### CLI Flags
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-width` | 20 | Number of maze cells horizontally |
+| `-height` | 20 | Number of maze cells vertically |
+| `-cell` | 16 | Pixel size of each rune in the rendered grid |
+| `-out` | `maze.png` | Output file path |
+
+The CLI prints the destination file once the render completes. Larger mazes or bigger cell sizes produce proportionally larger PNGs.
 
 ## Directory Structure
-
 ```
 .
-├── 2d
-│   └── maze.go            # Main program for generating and viewing mazes in 2D format with textures
-├── ascii
-│   └── maze.go            # Main program for generating and viewing mazes in ASCII format
-├── gen
-│   └── maze.go            # Maze generation logic using the Hunt-and-Kill algorithm
-├── lib
-│   └── maze.go            # Shared library for maze generation algorithms
-├── scripts
-│   ├── 2d.sh              # Script to generate a new 2D maze and view it
-│   └── ascii.sh           # Script to generate a new ASCII maze and view it
-├── textures
-│   ├── entrance
-│   │   └── generate.go    # Generator for the entrance texture
-│   ├── exit
-│   │   └── generate.go    # Generator for the exit texture
-│   ├── floor
-│   │   └── generate.go    # Generator for the floor texture
-│   └── wall
-│       └── generate.go    # Generator for the wall texture
-├── bin                    # Directory for compiled binaries
-├── Makefile               # Makefile for building the project and generating textures
-├── README.md              # This README file
-├── go.mod                 # Go module file
-└── go.sum                 # Go dependencies file
-```
-
-## Installation
-
-1. **Clone the repository**:
-   ```sh
-   git clone https://github.com/storbeck/maze.git
-   cd maze
-   ```
-
-2. **Build and generate textures**:
-   ```sh
-   make
-   ```
-
-## Usage
-
-### Generate and View a New 2D Maze
-
-To generate a new maze, generate textures, and view it in 2D:
-
-```sh
-make && ./scripts/2d.sh
-```
-
-### Generate and View a New ASCII Maze
-
-To generate a new maze and view it in ASCII without regenerating textures:
-
-```sh
-make build && ./scripts/ascii.sh
-```
-
-## Generating Textures Only
-
-If you need to regenerate the textures separately, run:
-
-```sh
-make textures
+├── cmd/mazeimg        # CLI entry point
+├── go.mod
+├── go.sum
+├── lib                # Maze generation logic
+└── README.md
 ```
 
 ## Cleaning Up
-
-To clean up the generated files, run:
-
+Remove the built binary and generated image files as needed:
 ```sh
-make clean
+rm -f bin/mazeimg *.png
 ```

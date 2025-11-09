@@ -144,7 +144,14 @@ func (m *Maze) removeWall(c1, c2 *Cell) {
 
 // Print prints the maze in the console
 func (m *Maze) Print() {
-	// Represent the maze with walls and paths
+	for _, row := range m.ToRuneGrid() {
+		fmt.Println(string(row))
+	}
+}
+
+// ToRuneGrid returns a grid representation of the maze using runes so it can
+// be reused by different renderers (ASCII, PNG, etc.).
+func (m *Maze) ToRuneGrid() [][]rune {
 	mazeRep := make([][]rune, m.Height*2+1)
 	for i := range mazeRep {
 		mazeRep[i] = make([]rune, m.Width*2+1)
@@ -171,12 +178,8 @@ func (m *Maze) Print() {
 		}
 	}
 
-	// Mark entrance and exit
 	mazeRep[1][1] = 'E'                      // Entrance
 	mazeRep[m.Height*2-1][m.Width*2-1] = 'X' // Exit
 
-	// Print to console
-	for _, row := range mazeRep {
-		fmt.Println(string(row))
-	}
+	return mazeRep
 }

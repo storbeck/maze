@@ -1,19 +1,11 @@
-.PHONY: all textures build clean
-
-all: textures build
-
-textures:
-	go run textures/floor/generate.go
-	go run textures/wall/generate.go
-	go run textures/entrance/generate.go
-	go run textures/exit/generate.go
+.PHONY: build run clean
 
 build:
-	go build -o bin/mazegen gen/maze.go
-	go build -o bin/mazeascii ascii/maze.go
-	go build -o bin/maze2d 2d/maze.go
+	mkdir -p bin
+	go build -o bin/mazeimg ./cmd/mazeimg
+
+run:
+	go run ./cmd/mazeimg $(ARGS)
 
 clean:
-	rm -f bin/mazegen bin/mazeascii bin/maze2d
-	rm -f textures/*.png
-	rm -f maze.txt maze.png
+	rm -f bin/mazeimg *.png
