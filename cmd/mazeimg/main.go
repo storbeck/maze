@@ -5,20 +5,64 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"math"
 
 	"github.com/fogleman/gg"
 	mazelib "github.com/storbeck/maze/lib"
 )
 
+const (
+	letterDefaultWidth      = 55
+	letterDefaultHeight     = 70
+	letterPrintableWidthPx  = 2250
+	letterPrintableHeightPx = 3000
+)
+
 func main() {
 	var width, height, cellSize int
 	var output string
+	var letterPreset bool
 
 	flag.IntVar(&width, "width", 20, "Number of cells horizontally")
 	flag.IntVar(&height, "height", 20, "Number of cells vertically")
 	flag.IntVar(&cellSize, "cell", 16, "Size (in pixels) of each maze cell in the output image")
 	flag.StringVar(&output, "out", "maze.png", "Path for the generated PNG")
+	flag.BoolVar(&letterPreset, "letter", false, "Generate a maze sized for US Letter at 300dpi")
 	flag.Parse()
+
+	var widthProvided, heightProvided, outProvided bool
+	flag.Visit(func(f *flag.Flag) {
+		switch f.Name {
+		case "width":
+			widthProvided = true
+		case "height":
+			heightProvided = true
+		case "out":
+			outProvided = true
+		}
+	})
+
+	if letterPreset {
+		if !widthProvided {
+			width = letterDefaultWidth
+		}
+		if !heightProvided {
+			height = letterDefaultHeight
+		}
+
+		gridWidth := width*2 + 1
+		gridHeight := height*2 + 1
+		pxPerCellX := float64(letterPrintableWidthPx) / float64(gridWidth)
+		pxPerCellY := float64(letterPrintableHeightPx) / float64(gridHeight)
+		cellSize = int(math.Floor(math.Min(pxPerCellX, pxPerCellY)))
+		if cellSize < 1 {
+			cellSize = 1
+		}
+
+		if !outProvided || output == "maze.png" {
+			output = "maze-letter.png"
+		}
+	}
 
 	if width <= 0 || height <= 0 {
 		log.Fatal("width and height must be positive integers")

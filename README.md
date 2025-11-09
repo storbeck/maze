@@ -33,8 +33,11 @@ go run ./cmd/mazeimg -width 20 -height 20 -cell 16 -out maze.png
 | `-height` | 20 | Number of maze cells vertically |
 | `-cell` | 16 | Pixel size of each rune in the rendered grid |
 | `-out` | `maze.png` | Output file path |
+| `-letter` | `false` | Auto-size the PNG for US Letter (cell size ignored) |
 
 The CLI prints the destination file once the render completes. Larger mazes or bigger cell sizes produce proportionally larger PNGs.
+
+Use `-letter` to generate a maze pre-sized for printing on US Letter paper at 300 dpi (roughly 7.4"×9.4" of maze). The CLI automatically rescales the cell size to keep the image within printable bounds, so you can still raise `-width`/`-height` for added complexity without worrying about manual math. You can override `-out`, but `-cell` is ignored whenever `-letter` is used.
 
 ## Directory Structure
 ```
